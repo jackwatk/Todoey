@@ -59,7 +59,7 @@
 				7DDA1AA520ADAD20006A7959 /* AppDelegate.swift */,
 				7DEAF9AC20B1B33F002CADF4 /* Controllers */,
 				7DEAF9AB20B1B327002CADF4 /* Data Model */,
-				7DEAF9AD20B1B375002CADF4 /* View */,
+				7DEAF9AD20B1B375002CADF4 /* Views */,
 				7DDA1AAC20ADAD22006A7959 /* Assets.xcassets */,
 				7DDA1AAE20ADAD22006A7959 /* LaunchScreen.storyboard */,
 				7DDA1AB120ADAD22006A7959 /* Info.plist */,
@@ -83,12 +83,12 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
-		7DEAF9AD20B1B375002CADF4 /* View */ = {
+		7DEAF9AD20B1B375002CADF4 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				7DDA1AA920ADAD21006A7959 /* Main.storyboard */,
 			);
-			path = View;
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
