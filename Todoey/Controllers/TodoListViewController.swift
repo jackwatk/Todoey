@@ -73,6 +73,7 @@ class TodoListViewController: UITableViewController {
             
             
             let newItem = Item()
+            
             newItem.title = textField.text!
             
             self.itemArray.append(newItem)
