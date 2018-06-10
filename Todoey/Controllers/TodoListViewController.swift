@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class TodoListViewController: UITableViewController {
+class TodoListViewController: UITableViewController{
 
     var itemArray = [Item]()
     
@@ -26,9 +26,9 @@ class TodoListViewController: UITableViewController {
         //if let items = defaults.array(forKey: "TodoListArray") as? [String] {
             //itemArray = items
         //}
+       
         
-     
-//       loadItems()
+        loadItems()
     
     }
 //MARK - Tableview Datasource Methods
@@ -54,7 +54,10 @@ class TodoListViewController: UITableViewController {
 //MARK - TableView Delegate Methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+//        context.delete(itemArray[indexPath.row])
+//        itemArray.remove(at: indexPath.row)
         
+//        line that does check box on selection
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
         saveItems()
@@ -111,22 +114,53 @@ class TodoListViewController: UITableViewController {
         self.tableView.reloadData()
     }
     // decode items
-//    func loadItems(){
-//
-//       if let data = try? Data(contentsOf: dataFilePath!) {
-//            let decoder = PropertyListDecoder()
-//        do{
-//                itemArray = try decoder.decode([Item].self, from: data)
-//        } catch {
-//                print("error here during decoding \(error)")
-//        }
-//    }
-//}
-
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()){
+        
+        do {
+            itemArray = try context.fetch(request)
+        } catch{
+            print("error fethcing data from context \(error)")
+            
+        }
+        tableView.reloadData()
+      
+        }
 
 
 }
+//MARK: Search bar methods
 
+extension TodoListViewController : UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+//        creates request
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+//        writain in c can use NSPredicate Cheatsheet
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+       
+        
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+
+        loadItems(with: request)
+        
+        }
+    
+//    function that returns original list
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+//      will only get triggered when the search bar is empty
+            loadItems()
+            
+//            dismissing keyboard and flashy selector - no longer the thing selected
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+            
+        }
+    }
+    
+    
+    }
 
 
 
