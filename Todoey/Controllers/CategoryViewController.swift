@@ -11,7 +11,7 @@ import CoreData
 
 class CategoryViewController: UITableViewController {
     
-    var catergoryArray = [Category]()
+    var categories = [Category]()
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     
@@ -25,7 +25,7 @@ class CategoryViewController: UITableViewController {
     //MARK: TableView Datasource Methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return catergoryArray.count
+        return categories.count
         
     }
     
@@ -33,12 +33,29 @@ class CategoryViewController: UITableViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "toDoCatergoryCell", for: indexPath)
         
-        let catergory = catergoryArray[indexPath.row]
-        cell.textLabel?.text  = catergory.name
+        
+        cell.textLabel?.text  = categories[indexPath.row].name
         
         return cell
 
     }
+    
+    
+//    for connecting to todolist
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "goToItems", sender: self)
+    }
+    
+//    prep work so that the sugue takes in information from catergory
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destinationVC = segue.destination as! TodoListViewController
+        
+        if let indexPath = tableView.indexPathForSelectedRow {
+            destinationVC.selectedCategory = categories[indexPath.row]
+                
+            }
+        }
+    
     
     //MARK: - Add New Categories
     
@@ -55,7 +72,7 @@ class CategoryViewController: UITableViewController {
             
             newCatergory.name = textField.text!
             
-            self.catergoryArray.append(newCatergory)
+            self.categories.append(newCatergory)
             
             self.saveCategory()
             
@@ -76,13 +93,7 @@ class CategoryViewController: UITableViewController {
     
     //MARK: - Tableview delegate methods - what happens when you click on table view
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-            saveCategory()
-        
-        tableView.deselectRow(at: indexPath, animated: true)
-       
-    }
+  
     //MARK: - Data Manipulation Methods
     
 //    save items
@@ -102,7 +113,7 @@ class CategoryViewController: UITableViewController {
 //  load items
     func loadCatergories(with request: NSFetchRequest<Category> = Category.fetchRequest()){
         do {
-            catergoryArray = try context.fetch(request)
+            categories = try context.fetch(request)
         } catch{
             print("error fethcing data from context \(error)")
             
