@@ -11,24 +11,109 @@ import CoreData
 
 class CategoryViewController: UITableViewController {
     
-   
-
+    var catergoryArray = [Category]()
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        loadCatergories()
 
     }
 
     //MARK: TableView Datasource Methods
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        return catergoryArray.count
+        
+    }
     
-    //MARK: - Data Manipulation Methods
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "toDoCatergoryCell", for: indexPath)
+        
+        let catergory = catergoryArray[indexPath.row]
+        cell.textLabel?.text  = catergory.name
+        
+        return cell
+
+    }
     
     //MARK: - Add New Categories
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        
+        var textField = UITextField()
+        
+        let alert = UIAlertController(title: "Add New Todoey Catergory", message: "", preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "Add Catergory", style: .default) { (action) in
+    
+            
+            let newCatergory = Category(context: self.context)
+            
+            newCatergory.name = textField.text!
+            
+            self.catergoryArray.append(newCatergory)
+            
+            self.saveCategory()
+            
+        }
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Create new catergory"
+            textField = alertTextField
+            
+            print(alertTextField.text)
+            print("Now")
+        }
+        
+        alert.addAction(action)
+        present(alert, animated: true, completion: nil)
+    
     }
     
     
     //MARK: - Tableview delegate methods - what happens when you click on table view
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+            saveCategory()
+        
+        tableView.deselectRow(at: indexPath, animated: true)
+       
+    }
+    //MARK: - Data Manipulation Methods
     
+//    save items
+    func saveCategory(){
+        
+        
+        do {
+            try context.save()
+        } catch {
+            print("Error saving context: \(error)")
+            
+            
+        }
+        
+        self.tableView.reloadData()
+    }
+//  load items
+    func loadCatergories(with request: NSFetchRequest<Category> = Category.fetchRequest()){
+        do {
+            catergoryArray = try context.fetch(request)
+        } catch{
+            print("error fethcing data from context \(error)")
+            
+        }
+        tableView.reloadData()
+        
+    }
 }
+
+    
+    
+    
+    
+
